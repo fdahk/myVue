@@ -47,6 +47,129 @@
                 })
     2.key as keyof typeof directives 
         告诉TS key 是 directives 对象的有效属性名
+    3.vue组件和插件的区别
+        编写形式：
+            组件：.vue文件 、 vue.component()创建
+            插件：必须暴露install方法作为 vue的构造器，并且可以选择配置项
+        注册形式：
+            插件：vue.use(plugin,{...})
+    4.vue过滤器原理分析
+        
+    5.vue部署到线上 显示404问题
+        基础概念：vue项目打包成静态HTML文件、nginx 加载
+        404的两种情况：
+            1.history模式：nginx 没有对应的location配置
+            2.hash模式：而hash模式相当于一直在一个location配置，只不过根据#访问不同资源
+        解决方案：
+            本质：路由执行js切换视图，会默认刷新页面
+            解决：所有页面采用 redirect
+            location /{
+                index /dist/index.html
+                try_files $uri /index.html//redirect index.html //添加这个配置
+                }
+    6.怎么实现SSR
+        传统web开发：服务器渲染所有页面返回给前端
+        SPA：CSR
+    7.vue3新特性：
+        framnets：能有多个根节点
+        teleport：使用modal时vue2需要嵌套到组件内部，现在能直接传送
+        自定义渲染器：
+            import { createRenderer }from "@vue/runtime-core
+            const { render, createApp }= createRenderer({
+            patchProp,
+            insert,
+            remove,createElement,
+            })
+            export  render, createAppexport * from@vue/runtime-core
+    8.keep-alive ： 内置组件，组件切换中保存状态到内存，用于性能优化
+        include： 正则，符合则保存
+        exclude：
+        max:
+        使用时用<keep-alive include="..."> </keep-alive>包裹
+    9.forEach 是同步的，不会等待异步操作
+
+7.29：
+    类型定义的方式：
+
+    type定义和interface定义的区别：
+        扩展性（Declaration Merging）：
+            interface 支持声明合并
+        联合类型和交叉类型
+            type 更适合联合类型、交叉类型、工具类型
+            interface Status = 'pending' | 'approved' | 'rejected';  // ❌ 错误：interface 不能表示联合类型
+        计算属性和映射类型
+            type 支持更复杂的类型操作：映射类型、条件类型、模板字面量类型、递归类型
+    选择指南
+        使用 interface 当：
+        定义对象结构
+        需要声明合并
+        类实现
+        函数重载
+        混合接口
+
+        使用 type 当：
+        联合类型
+        交叉类型
+        条件类型
+        映射类型
+        模板字面量类型
+        工具类型
+    总结：
+        特性	interface	type
+        声明合并	✅ 支持	❌ 不支持
+        联合类型	❌ 不支持	✅ 支持
+        交叉类型	❌ 不支持	✅ 支持
+        条件类型	❌ 不支持	✅ 支持
+        映射类型	❌ 不支持	✅ 支持
+        模板字面量	❌ 不支持	✅ 支持
+        类实现	✅ 支持	✅ 支持
+        函数重载	✅ 支持	❌ 不支持
+        混合接口	✅ 支持	❌ 不支持
+        编译性能	更好	稍慢
+        错误信息	清晰	详细
+    
+    2.Vue 3 引入了 Fragment 概念，允许组件返回多个根节点，不会自动包装额外的 div
+        Vue 2 (会包装)
+    3.const instance = getCurrentInstance()
+        getCurrentInstance() 返回当前组件的实例对象，包含：
+        instance.appContext: 应用上下文
+        instance.appContext.app: 根应用实例
+        instance.vnode: 虚拟节点
+        instance.parent: 父组件实例
+    4.插件模式：
+    5.vue中的render函数：
+        示例：
+        const renderInput = () => {
+        if (!directivesReady.value) {
+            return h('div', '指令加载中...')
+        }
+        <!-- h: 渲染函数（createElement的简写） h(tag, props, children) -->
+        return h('input', {
+            type: 'text',
+            directives: [
+                {
+                    name: 'focus',
+                    value: undefined
+                }
+            ]
+        })
+    }
+    6.函数定义 - 在组件实例化时就完成
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 vue中的副作用函数 ：

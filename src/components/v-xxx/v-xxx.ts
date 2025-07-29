@@ -1,9 +1,10 @@
 import type { Directive } from 'vue'
 // 自动聚焦指令
-export const focus: Directive = {
+const focus: Directive = {
+
     mounted(el) {
+        console.log('focus mounted')
         el.focus()
-        console.log('focus directive mounted')
     }
 }
 

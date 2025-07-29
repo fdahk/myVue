@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import Vxxx from './components/v-xxx/v-xxx.vue'
 </script>
 
 <template>
-  <div>
-    <Vxxx />
+  <div class="app">
+    <router-view />
   </div>
 </template>
 
 <style scoped>
-
+.app {
+  width: 100%;
+  height: 100%;
+}
 </style>
