@@ -155,8 +155,44 @@
         })
     }
     6.函数定义 - 在组件实例化时就完成
+    7.window 是全局对象， 在浏览器中，全局变量都是 window 的属性，全局函数也是 window 的方法
+
+7.30：
+    1.事件传播：
+        1. Window 捕获阶段
+        2. Document 捕获阶段
+        3. HTML 捕获阶段
+        4. Body 捕获阶段
+        5. Container 捕获阶段
+        6. Button 目标阶段
+        7. Container 冒泡阶段
+        8. Body 冒泡阶段
+        9. HTML 冒泡阶段
+        10. Document 冒泡阶段
+        11. Window 冒泡阶段
+    2.setup
+        一般在script中定义setup，会自动把代码放到setup函数中
+        也可以自己写：
+            <script>
+                export default {
+                    setup() {
+                        useAutoLogout(10)
+                    }
+                }
+            </script>
+    3.在 Vue 3 的 Composition API 里，只要函数是在 setup() 里被调用的，它就处于当前组件的“生命周期上下文”中。
+        函数就可以调用 onMounted、onUnmounted 等生命周期钩子，实际上就是把这些钩子注册到“当前组件”上
+    4.apply 是 JavaScript 中所有函数都有的一个方法，用于调用函数并指定 this 值和参数
+        为什么要用 apply？
+        保持 this 上下文：
+        当事件触发时，this 通常指向触发事件的元素
+        使用 apply(this, args) 确保原始函数 fn 执行时，this 指向正确
 
 
+7.30
+触发硬件加速
+    perspective 会让浏览器为该元素开启 GPU 加速（合成层），提升动画和渲染性能，减少卡顿。
+    常见的触发硬件加速的方式还有 transform: translateZ(0);、will-change: transform; 等
 
 
 

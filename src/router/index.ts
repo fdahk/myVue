@@ -15,6 +15,10 @@ const router = createRouter({
                     path: 'funcValidator',
                     component: () => import('../components/funcValidator/index.vue'),
                 },
+                {
+                    path: 'autoLogout',
+                    component: () => import('../components/autoLogout/index.vue'),
+                },
             ]
         }
     ]

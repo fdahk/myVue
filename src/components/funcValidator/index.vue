@@ -2,14 +2,15 @@
 import {ref} from 'vue'
 import { validate } from './validator'
 const value = ref('')
-const msg = ref('')
+const msg = ref<string[]>([])
 const handleValidate = () => {
     
     const ctx = {
         value: value.value,
-        type: true,
+        type: false,
     }
-    msg.value = validate(ctx) as string
+    msg.value = []
+    msg.value.push(validate(ctx) as string)
 }
 </script>
 
@@ -32,7 +33,7 @@ const handleValidate = () => {
         <div class="section">
             <h3>当前状态</h3>
             <div class="status-info">
-                <p>校验结果: {{ msg }}</p>
+                <p v-for="item in msg" :key="item">{{ item }}</p>
             </div>
         </div>
     </div>
