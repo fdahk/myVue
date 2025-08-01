@@ -187,24 +187,169 @@
         保持 this 上下文：
         当事件触发时，this 通常指向触发事件的元素
         使用 apply(this, args) 确保原始函数 fn 执行时，this 指向正确
+    5.函数的调用方法
+        // 1. 直接调用
+        fn(arg1, arg2)
 
+        // 2. apply - 参数是数组
+        fn.apply(thisArg, [arg1, arg2])
+
+        // 3. call - 参数是分开的
+        fn.call(thisArg, arg1, arg2)
+
+        // 4. bind - 返回新函数
+        const boundFn = fn.bind(thisArg)
+        boundFn(arg1, arg2)
 
 7.30
 触发硬件加速
     perspective 会让浏览器为该元素开启 GPU 加速（合成层），提升动画和渲染性能，减少卡顿。
     常见的触发硬件加速的方式还有 transform: translateZ(0);、will-change: transform; 等
 
+7.31：
+    1.函数声明和箭头函数的区别：
 
+        =======================变量提升
+        // 函数声明 - 变量提升
+        console.log(fc1()); // ✅ 正常工作
+        function fc1() {
+        return "Hello";
+        }
+        // 箭头函数 - 不会被提升
+        console.log(fc2()); // ❌ 报错：fc2 is not a function
+        const fc2 = () => {
+        return "Hello";
+        };        
 
+        ===================this指向
+        const obj = {
+        name: "Object",
 
+        // 函数声明 - this指向调用者
+        method1: function() {
+            console.log(this.name);
+        },
+        
+        // 箭头函数 - this继承外层作用域
+        method2: () => {
+            console.log(this.name); // undefined
+        }
+        };
+        obj.method1(); // "Object"
+        obj.method2(); // undefined
 
+        =========================参数
+        // 函数声明 - 有arguments对象
+        function fc1() {
+        console.log(arguments);
+        }
+        fc1(1, 2, 3); // Arguments(3) [1, 2, 3]
 
+        // 箭头函数 - 没有arguments对象
+        const fc2 = () => {
+        console.log(arguments); // 报错
+        };
+        fc2(1, 2, 3); // ❌ arguments is not defined
+    2.事件循环
+        事件循环（Event Loop）执行顺序
+        执行一轮宏任务（包括主线程上的同步代码和一个宏任务，比如 setTimeout 的回调）
+        执行本轮产生的所有微任务（比如 Promise.then 的回调）
+        UI 渲染（如有必要）
+        进入下一轮宏任务
+    3.promise对象：Promise{<resolved>: resolve1}
 
+8.1：
+    1.then() 方法期望接收函数作为参数，如果传入非函数值，会被忽略，相当于传入 undefined
+        .then(2)  // 2 不是函数，被忽略，相当于 .then(undefined)
+        // 等价于 .then(value => value)
+        // 传入值：1，返回值：1， 此时发生透传现象，无论多少层then，接受的参数都是第一个then的值
+        原理是promise的内部实现，其内部监测到参数非函数则直接返回参数
 
+    2. .then() 可接受两个参数，第一个是promise成功处理函数，第二个是失败函数
+    3.代码输出
+        Promise.resolve('1')
+        .then(res => {
+            console.log(res)
+        })
+        .finally(() => {
+            console.log('finally')
+        })
+        Promise.resolve('2')
+        .finally(() => {
+            console.log('finally2')
+            return '我是finally2返回的值'
+        })
+        .then(res => {
+            console.log('finally2后面的then函数', res)
+        })
+    4.new Promise(executor)
+        构造函数接收一个函数作为参数，这个函数通常被称为 executor（执行器
+        executor 函数接收两个参数：
+            第一个参数：resolve 函数（用于解决 Promise）
+            第二个参数：reject 函数（用于拒绝 Promise）
+        const p = new Promise(r => setTimeout(() => r(x, console.log(x)), 1000))
+//                            ↑
+//                 这里的 r 就是 resolve 函数
+    5. .resolve方法只能有一参数，但并不代表r(x, console.log(x)) 里面的参数不会执行
+            其依然执行，结果为r(x, undefined)
+    6.resolve 函数本身返回 undefined：它只是用来改变 Promise 的状态
+        resolve本身改变成功与否，其参数改变promise的值
+        例如：
+            new Promise((resolve, reject) => {
+                resolve('这个值会成为 Promise 的值');
+            }).then(value => {
+                console.log('接收到的值:', value); // "这个值会成为 Promise 的值"
+            });
 
+    7.async本身不会进入异步，await才会使后面的代码进入微任务
+    8.同步代码 => 清空微任务 => 清空宏任务
+    9.console打印一个地址会打印出其具体的值而不是地址
+        如何查看真正的内存地址
+            Object.prototype.toString
+            console.dir
+            JSON.stringify
+    10.只有async相关代码会加入微任务
+        间隔函数等函数本身是加入宏任务，其回调才会加入微任务
+    11. .finally的返回值如果在没有抛出错误的情况下默认会是上一个Promise的返回值
+    12.Promise 链的返回值传递
+        最后执行的 .then() 或 .catch() 决定promise最终值，finally不改变promise状态
+    13.promise链的执行规则
+        // 成功路径：then1 -> finally -> then2
+        // 失败路径：catch -> finally -> then2
+        不发生错误按顺序执行，发生错误立即跳到第一个catch执行（若catch与错误发生处有finally，finally先执行），finally为绝对执行
+    14.process.nextTick()，其回调函数被分发到微任务
+        注：Node.js 中的 process.nextTick() 和 Vue 中的 nextTick（DOM 更新后执行） 不是一个东西
+        一个在/ Node.js 环境运行，一个在浏览器环境运行
+    15.执行完一个宏任务就检查微任务
+    16.严格模式与一般模式下this指向主要区别：
+        全局作用域：
+        一般模式：this 指向全局对象
+        严格模式：this 为 undefined
+        函数调用：
+        一般模式：this 指向全局对象
+        严格模式：this 为 undefined
+        相同的情况：
+        对象方法调用
+        构造函数调用
+        事件处理函数
+        call、apply、bind 方法
+        箭头函数
+    17.立即执行函数由window调用，但他的环境不是window而是它定义处的环境，调用某值时会沿着作用域链向上查找
+    18.匿名函数的this一定指向全局window
+        // 匿名函数：没有函数名的函数
+        function() {
+            console.log('这是一个匿名函数');
+        }
 
+        // 但上面那样直接写会报错，需要赋值或立即调用
+        var anonymousFunc = function() {
+            console.log('匿名函数');
+        };
 
-
+        // 立即执行的匿名函数
+        (function() {
+            console.log('立即执行的匿名函数');
+        })();
 
 
 

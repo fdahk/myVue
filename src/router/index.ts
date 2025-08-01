@@ -19,6 +19,10 @@ const router = createRouter({
                     path: 'autoLogout',
                     component: () => import('../components/autoLogout/index.vue'),
                 },
+                {
+                    path: 'bigScreenAdaptive',
+                    component: () => import('../components/bigScreenAdaptive/index.vue'),
+                },
             ]
         }
     ]
